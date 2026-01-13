@@ -1,0 +1,15 @@
+/workspaces/AmericanFootballLeague/AFL_Simulation/bin/Debug/net10.0/AFL_Simulation
+/workspaces/AmericanFootballLeague/AFL_Simulation/bin/Debug/net10.0/AFL_Simulation.deps.json
+/workspaces/AmericanFootballLeague/AFL_Simulation/bin/Debug/net10.0/AFL_Simulation.runtimeconfig.json
+/workspaces/AmericanFootballLeague/AFL_Simulation/bin/Debug/net10.0/AFL_Simulation.dll
+/workspaces/AmericanFootballLeague/AFL_Simulation/bin/Debug/net10.0/AFL_Simulation.pdb
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.AssemblyInfoInputs.cache
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.AssemblyInfo.cs
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.csproj.CoreCompileInputs.cache
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.sourcelink.json
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.dll
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/refint/AFL_Simulation.dll
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.pdb
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/AFL_Simulation.genruntimeconfig.cache
+/workspaces/AmericanFootballLeague/AFL_Simulation/obj/Debug/net10.0/ref/AFL_Simulation.dll
