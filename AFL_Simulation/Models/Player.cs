@@ -1,4 +1,5 @@
 using System;
+using AFL_Simulation.Utils;
 
 namespace AFL_Simulation.Models 
 {
@@ -30,16 +31,32 @@ namespace AFL_Simulation.Models
         {
             var rand = new Random();
 
-            // A simple list of 1950s style names
-            string[] firstNames = { "Johnny", "Dick", "Bronko", "Chuck", "Vince", "Tom", "Hank", "Red", "Bubba", "Will", "Dwight", "Sam" };
-            string[] lastNames = { "Unitas", "Butkus", "Starr", "Graham", "Nitschke", "Brown", "Huff", "Berry", "Green", "Black", "Miller" };
+            // Get a unique full name from our generator
+            string fullName = NameGenerator.GetUniqueName();
 
-            string fName = firstNames[rand.Next(firstNames.Length)];
-            string lName = lastNames[rand.Next(lastNames.Length)];
+            //Split it back into First/Last
+            string[] parts = fullName.Split(' ');
+            string fName = parts[0];
+            //Handle last names that may have spaces like Van Brocklin
+            string lName = parts.Length > 2 ? $"{parts[1]} {parts[2]}" : parts[1];
+            
+            // --- BETTER RATING LOGIC ---
+            // We roll a 100-sided die to determine the "Tier" of the player.
+            // This prevents too many 90+ rated rookies
 
-            // Generate a rating between 60 (Benchwarmer) and 85 (Legend)
-            int rating = rand.Next(60, 100);
+            int roll = rand.Next(1, 101);
+            int rating;
 
+            if (roll <= 5) //5% chance: "Bust" / Camp Body
+                rating = rand.Next(50, 59);
+            else if (roll <= 60) // 55% Average Rookie
+                rating = rand.Next(60, 74);
+            else if (roll <= 90) // 30% chance: Good starter potential
+                rating = rand.Next(75, 84);
+            else if (roll <= 98) // 8% chance Star Potential
+                rating = rand.Next(85, 89);
+            else
+                rating = rand.Next(90, 95);
             return new Player(fName, lName, pos, rating);
         }
 
