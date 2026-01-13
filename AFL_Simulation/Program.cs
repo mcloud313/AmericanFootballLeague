@@ -1,5 +1,6 @@
 ﻿using System;
 using AFL_Simulation.Models;
+using AFL_Simulation.Engine; 
 
 namespace AFL_Simulation
 {
@@ -7,29 +8,45 @@ namespace AFL_Simulation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("--- AFL League Office (1950) --- ");
+            Console.WriteLine("--- AFL Drive Simulator (v0.2) ---");
 
-            // 1. Create a Team
+            // Setup
             Team kc = new Team("Kansas City", "Plainsmen", "Coach Marty");
-            Console.WriteLine($"Founded: {kc.ToString()}");
-
-            // 2. Create our star rookie
-            Player rookie = Player.CreateRandomPlayer(Position.QB);
-            Console.WriteLine($"\nScouted Top Prospect: {rookie.ToString()}");
-
-            // 3. Sign him!
-            kc.SignPlayer(rookie);
-            Console.WriteLine($"\nBREAKING NEWS: {kc.City} {kc.Name} sign {rookie.FirstName} {rookie.LastName}!");
-
-            // 4. Fill the rest of the roster with randoms
             kc.FillRosterWithScabs();
+            Team ny = new Team("New York", "Empire", "Coach Parcells");
+            ny.FillRosterWithScabs();
 
-            // 5. Print the Roster
-            Console.WriteLine($"\n --- {kc.Name} Roster --- ");
-            foreach (Player p in kc.Roster)
+            // Create the Game State
+            Game currentGame = new Game(kc, ny);
+
+            Console.WriteLine("Kickoff! Kansas City starts at their own 20.");
+            Console.WriteLine("------------------------------------------------");
+
+            // Loop for 10 plays or until score changes
+            for (int i = 1; i <= 15; i++)
             {
-                Console.WriteLine($"- {p.Position}: {p.FirstName} {p.LastName} ({p.OverallRating})");
+                Console.WriteLine($"\nPlay {i} | {currentGame.GetSituation()}");
+
+                string result = PlayEngine.SimulatePlay(currentGame);
+                Console.WriteLine($">> {result}");
+
+                // Scoreboard Check
+                if (currentGame.HomeScore > 0 || currentGame.AwayScore > 0)
+                {
+                    Console.WriteLine($"\nSCORE CHANGE! KC: {currentGame.HomeScore} - NY: {currentGame.AwayScore}");
+                    break;
+                }
+
+                System.Threading.Thread.Sleep(1000);
             }
+        }
+
+        static int GetTeamOvr(Team t)
+        {
+            if (t.Roster.Count == 0) return 0;
+            int total = 0;
+            foreach(var p in t.Roster) total += p.OverallRating;
+            return total / t.Roster.Count;
         }
     }
 }
