@@ -22,9 +22,11 @@ namespace AFL_Simulation.Engine
             }
             else
             {
-                // Randomly pick Run/Pass for downs 1-3
-                offPlay = GetRandomOffensivePlay();
-                // Ensure we don't pick special teams plays on normal downs
+                // Simple: don't bomb it on 3rd and 1
+                if (game.YardsToGo < 3) offPlay = PlayType.RunInside;
+                else offPlay = GetRandomOffensivePlay();
+
+                // Sanity Check : no special teams on normal downs
                 while (offPlay == PlayType.Punt || offPlay == PlayType.FieldGoal)
                 {
                     offPlay = GetRandomOffensivePlay();
@@ -33,14 +35,19 @@ namespace AFL_Simulation.Engine
 
             DefensiveStrategy defStrat = GetRandomDefensivePlay();
 
+            // Time management variables
+            int timeConsumed = 0;
+
             // 2. Handle Special Teams Separately
             if (offPlay == PlayType.Punt)
             {
+                game.DecrementTime(10); // Punts take time
                 game.SwitchPossession();
                 return $"{offense.City} punts. {defense.City} takes over.";
             }
             if (offPlay == PlayType.FieldGoal)
             {
+                game.DecrementTime(5);
                 // Simple 80% success rate for now
                 if (_rand.Next(1, 101) > 20)
                 {
@@ -62,9 +69,36 @@ namespace AFL_Simulation.Engine
             double offStrength = GetTeamAverage(offense);
             double defStrength = GetTeamAverage(defense);
 
-            // Calculate Gain
+            // Calculate Gain / Random Variance
             int roll = _rand.Next(-5, 15);
             int yardsGained = (int)(2 + roll); // simplified math for testing
+
+            // --- LOGIC: TIME CONSUMPTION ---
+            // Runs keep the clock moving (huddle). Passes stop clock if incomplete
+            if (offPlay == PlayType.RunInside || offPlay == PlayType.RunOutside)
+            {
+                timeConsumed = 35; // Run + Huddle
+            }
+            else // pass
+            {
+                //Simple logic: Negative yards on pass means a sack (clock runs)
+                // Positive yards usually means catch (clock runs)
+                // We need to simulate "Incomplete"
+                bool isIncomplete = _rand.Next(0, 10) > 6; // 30% chance incomplete
+
+                if (isIncomplete)
+                {
+                    yardsGained = 0;
+                    timeConsumed = 6; // Clock stops
+                    return $"Incomplete Pass by {offense.City}. (Time: {game.GetClockDisplay()})";
+                }
+                else
+                {
+                    timeConsumed = 30; // Catch + huddle
+                }
+            }
+            // Apply the time
+            game.DecrementTime(timeConsumed);
 
             // Update Game State
             game.BallOn += yardsGained;

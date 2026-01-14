@@ -8,7 +8,7 @@ namespace AFL_Simulation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("--- AFL Drive Simulator (v0.2) ---");
+            Console.WriteLine("--- AFL Game Day Simulator (v0.3) ---");
 
             // Setup
             Team kc = new Team("Kansas City", "Plainsmen", "Coach Marty");
@@ -22,23 +22,38 @@ namespace AFL_Simulation
             Console.WriteLine("Kickoff! Kansas City starts at their own 20.");
             Console.WriteLine("------------------------------------------------");
 
-            // Loop for 10 plays or until score changes
-            for (int i = 1; i <= 15; i++)
+            // The GAME LOOP
+            while (!currentGame.IsGameOver)
             {
-                Console.WriteLine($"\nPlay {i} | {currentGame.GetSituation()}");
+                // 1. Print Header
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\n[{currentGame.GetClockDisplay()}] SCORE: {kc.City} {currentGame.HomeScore} - {ny.City} {currentGame.AwayScore}");
+                Console.ResetColor();
+                Console.WriteLine($"Situation: {currentGame.GetSituation()}");
 
+                // 2. Simulate
                 string result = PlayEngine.SimulatePlay(currentGame);
                 Console.WriteLine($">> {result}");
 
-                // Scoreboard Check
-                if (currentGame.HomeScore > 0 || currentGame.AwayScore > 0)
+                // 3. Speed Control (Make it watchable)
+                // If the quarter just changed, pause longer
+                if (currentGame.TimeRemaining == 900 && currentGame.CurrentQuarter > 1)
                 {
-                    Console.WriteLine($"\nSCORE CHANGE! KC: {currentGame.HomeScore} - NY: {currentGame.AwayScore}");
-                    break;
+                    Console.WriteLine("\n*** END OF QUARTER ***\n");
+                    System.Threading.Thread.Sleep(2000);
                 }
-
-                System.Threading.Thread.Sleep(1000);
+                else
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
             }
+
+            //Post Game
+            Console.WriteLine("\n=====================================");
+            Console.WriteLine("FINAL SCORE");
+            Console.WriteLine($"{kc.City}: {currentGame.HomeScore}");
+            Console.WriteLine($"{ny.City}: {currentGame.AwayScore}");
+            Console.WriteLine("=======================================");
         }
 
         static int GetTeamOvr(Team t)

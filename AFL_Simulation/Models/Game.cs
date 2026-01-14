@@ -13,12 +13,17 @@ namespace AFL_Simulation.Models
         public int AwayScore {get; set; }
 
         //Field State
-        public Team Possession {get; set; } // Who has the ball?
-        public int BallOn {get; set; } // 0 to 100 (0 = Own Endzone, 50 = Midfield, 100 = TD)
-        public int Down {get; set; } // 1, 2, 3, 4
-        public int YardsToGo {get; set; } // Usually 10
+        public Team Possession {get; set; }
+        public int BallOn {get; set; }
+        public int Down {get; set; }
 
-        // Constructor sets up the coin toss (sort of)
+        public int YardsToGo {get; set; }
+
+        // --- New: Time State ---
+        public int CurrentQuarter {get; set; }
+        public int TimeRemaining {get; set; }
+        public bool IsGameOver {get; set; }
+
         public Game(Team home, Team away)
         {
             HomeTeam = home;
@@ -26,29 +31,65 @@ namespace AFL_Simulation.Models
             HomeScore = 0;
             AwayScore = 0;
 
-            // Default start: Home team gets ball at their own 20
+            // Start of Game
             Possession = HomeTeam;
             BallOn = 20;
             Down = 1;
             YardsToGo = 10;
+
+            // Clock setup
+            CurrentQuarter = 1;
+            TimeRemaining = 900; // 15 minutes
+            IsGameOver = false;
         }
 
         public void SwitchPossession()
         {
-            if (Possession == HomeTeam) Possession = AwayTeam;
-            else Possession = HomeTeam;
-
-            // Flip field position (If I was at my 40, you are now at your 60...)
-            // Simplified: Reset to 20 for now on turnover
-            BallOn = 20;
+            Possession = (Possession == HomeTeam) ? AwayTeam : HomeTeam;
+            BallOn = 20; // Reset to 20 for now (Touchback/punt landing)
             Down = 1;
             YardsToGo = 10;
+        }
+
+        // --- NEW: Clock Management ---
+        public void DecrementTime(int seconds)
+        {
+            TimeRemaining -= seconds;
+
+            if (TimeRemaining <= 0)
+            {
+                EndQuarter();
+            }
+        }
+
+        private void EndQuarter()
+        {
+            if (CurrentQuarter >= 4)
+            {
+                TimeRemaining = 0;
+                IsGameOver = true;
+            }
+            else
+            {
+                CurrentQuarter++;
+                TimeRemaining = 900; // Reset the clock to 15:00
+                // Note: In real football, possession logic at quarters is complex.
+                // For v0.3 we just keep posession as is.
+            }
+        }
+
+        //Helper to show "14:05" instead of 845 seconds.
+        public string GetClockDisplay()
+        {
+            int minutes = TimeRemaining / 60;
+            int seconds = TimeRemaining % 60;
+            return $"Q{CurrentQuarter} {minutes:D2}:{seconds:D2}";
         }
 
         public string GetSituation()
         {
             string loc = BallOn > 50 ? $"Opp {100 - BallOn}" : $"Own {BallOn}";
-            return $"{Possession.City} Ball | {Down} & {YardsToGo} @ {loc}";
+            return $"{GetClockDisplay()} | {Possession.City} Ball | {Down} & {YardsToGo} @ {loc}";
         }
     }
 }
