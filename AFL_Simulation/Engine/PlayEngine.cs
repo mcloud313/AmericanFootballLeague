@@ -139,14 +139,14 @@ namespace AFL_Simulation.Engine
         // Helper: Get Random play
         private static PlayType GetRandomOffensivePlay()
         {
-            var values = Enum.GetValues(typeof(PlayType));
-            return (PlayType)values.GetValue(_rand.Next(values.Length));
+            var values = Enum.GetValues<PlayType>(); 
+            return values[_rand.Next(values.Length)];
         }
 
         private static DefensiveStrategy GetRandomDefensivePlay()
         {
-            var values = Enum.GetValues(typeof(DefensiveStrategy));
-            return (DefensiveStrategy)values.GetValue(_rand.Next(values.Length));
+            var values = Enum.GetValues<DefensiveStrategy>();
+            return values[_rand.Next(values.Length)];
         }
 
         private static double GetTeamAverage(Team t)

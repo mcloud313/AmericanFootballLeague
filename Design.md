@@ -57,25 +57,54 @@ A text-based simulation management game starting in the year 1950. The user acts
 
 ## 5. Roadmap & Status
 
-### Phase 1: The Core Engine (Current)
-* [x] **v0.1:** Create Classes and a "One Play" simulator in Console. (**DONE**)
-* [x] **v0.2:** Simulate a full Drive (series of plays until score/punt). (**DONE**)
-* [ ] **v0.3:** **The Clock & Game Loop.** Implement Time (Minutes/Seconds), Quarters, and Halftime. 
-* [ ] **v0.4:** **The Box Score.** Track stats for individual players during the game (e.g., "Unitas: 12/20, 150 yds").
+## Phase 2: The Simulation Core (Fidelity)
+* [ ] **v0.4:** **The Narrative Engine & Stats.**
+    * **Play-by-Play:** "Unitas passes to Berry for 12 yards" (requires Roster lookup).
+    * **Box Score:** Track individual Game Stats (Passing/Rushing/Receiving yards).
+    * **Turnovers:** Implement Interceptions, Fumbles, and Sacks.
+    * **Overtime:** Logic for 5th Quarter if tied.
+* [ ] **v0.5:** **The Depth Chart.**
+    * **Substitution Logic:** Starters play most snaps; backups come in for blowouts or injuries.
+    * **Specialists:** Designate specific KR/PR (Kick/Punt Returners) and K/P.
+* [ ] **v0.6:** **Advanced Game Logic.**
+    * **Penalties:** False starts, holding (kills drives), pass interference (extends drives).
+    * **Fatigue:** Players perform worse if they play 10 snaps in a row without a break.
+    * **Home Field Advantage:** Slight boost to Home team, especially in loud stadiums.
 
-### Phase 2: The Season Loop
-* [ ] **v0.5:** **Schedule Generator.** Create a round-robin schedule for 16 teams.
-* [ ] **v0.6:** **Weekly Loop.** Simulate all games in a week, update Standings, handle Injuries.
-* [ ] **v0.7:** **Playoffs & Championship.** Logic for the top teams to play for the trophy.
+## Phase 3: The Season Loop (The Grind)
+* [ ] **v0.7:** **Schedule Generator.**
+    * Round-robin scheduling for 16 teams.
+    * Division logic (Play division rivals twice).
+* [ ] **v0.8:** **The Weekly Workflow.**
+    * Simulating other games in the background.
+    * **News Ticker:** "Breaking News: NY's Star QB out for season!"
+    * **Injury System:** "Probable," "Questionable," "Doubtful," "IR."
+* [ ] **v0.9:** **Standings & Playoffs.**
+    * Track W-L-T records.
+    * Tie-breaker logic for playoff seeding.
+    * The "AFL Championship Game."
 
-### Phase 3: The Franchise Mode (OOTP Depth)
-* [ ] **v0.8:** **Offseason.** Player Aging, Retirement, and the Draft.
-* [ ] **v0.9:** **Management.** Hiring Coaches, simple finances/contracts.
-* [ ] **v1.0:** **Persistence.** Saving and Loading the league to a database/file.
+## Phase 4: Franchise Management (The OOTP Layer)
+* [ ] **v1.0:** **The Human Element.**
+    * **Coaching Staff:** Hire OC/DC with specific schemes (e.g., "Vertical Passing" vs "Wishbone").
+    * **Scouting:** Fog of War. You don't see "Overall 85," you see "Scout Grade: A-" (and scouts can be wrong!).
+    * **Morale:** Players get angry if they lose or don't get touches.
+* [ ] **v1.1:** **The Front Office.**
+    * **Financials:** Ticket prices, stadium maintenance, player contracts/salaries.
+    * **The Draft:** 12 Rounds of rookies. Logic for AI teams to draft based on "Best Player Available" vs "Team Need."
+    * **Trades:** AI logic to offer/accept trades based on player value.
 
-## 6. Known Issues / TODOs
-* **Naming:** Player names need to be more diverse and guaranteed unique across the league.
-* **Logic Depth:** Engine currently uses "Team Average" rating. Needs to move to "Weighted Unit Ratings" (e.g., Pass Offense = QB + WRs + OL).
-* **Injuries:** Engine calculates all players (even injured ones). Need to implement an "Active/Inactive" check.
-* **Turnovers:** The engine currently assumes clean plays. Need to implement Fumbles, Interceptions, Sacks and Safeties.
-* **AI Logic:** Coaches pick random plays. Need to implement "Situation Aware" logic (e.g., Don't throw a bomb when up by 3 with 1 minute left).
+## Phase 5: Historical & Immersion (The "Flavor")
+* [ ] **v1.2:** **Historical Database.**
+    * Import real rookie classes by year (e.g., 1957 draft class has Jim Brown).
+    * "Era Settings": 1950s (Run heavy) vs 1980s (Pass heavy) rule changes.
+* [ ] **v1.3:** **Records & Awards.**
+    * Season Awards (MVP, Rookie of the Year).
+    * Hall of Fame induction logic.
+    * League Record Book (Single Season Rushing Record, etc.).
+
+## Phase 6: User Interface (The Look)
+* [ ] **v2.0:** **UI Overhaul.**
+    * Move from Console to a Desktop App (WPF or MAUI) or Web App (Blazor).
+    * Clickable hyperlinks (Click a player name to see their card).
+    * HTML Reports: Export "End of Season Report" to a webpage.
