@@ -9,130 +9,139 @@ namespace AFL_Simulation.Engine
 
         public static string SimulatePlay(Game game)
         {
-            Team offense = game.Possession;
-            Team defense = (game.Possession == game.HomeTeam) ? game.AwayTeam : game.HomeTeam;
+           Team offense = game.Possession;
+           Team defense = (game.Possession == game.HomeTeam) ? game.AwayTeam : game.HomeTeam;
 
-            // 1. Simple AI: if 4th Down, Punt or Kick. Otherwise, random normal play.
-            PlayType offPlay;
-            if (game.Down == 4)
+           // 1. Identify Key Actors (The Stars of the Show)
+           Player qb = offense.GetStarter(Position.QB);
+           Player rb = offense.GetStarter(Position.RB);
+           Player target = offense.GetRandomReceiver();
+
+           //2. Play Selection
+           PlayType offPlay;
+           if (game.Down == 4)
             {
-                // If close enough (past midfield 65), try FG. Else Punt.
                 if (game.BallOn > 65) offPlay = PlayType.FieldGoal;
                 else offPlay = PlayType.Punt;
             }
             else
             {
-                // Simple: don't bomb it on 3rd and 1
                 if (game.YardsToGo < 3) offPlay = PlayType.RunInside;
                 else offPlay = GetRandomOffensivePlay();
 
-                // Sanity Check : no special teams on normal downs
                 while (offPlay == PlayType.Punt || offPlay == PlayType.FieldGoal)
                 {
                     offPlay = GetRandomOffensivePlay();
                 }
             }
 
-            DefensiveStrategy defStrat = GetRandomDefensivePlay();
-
-            // Time management variables
-            int timeConsumed = 0;
-
-            // 2. Handle Special Teams Separately
+            // 3. Handle Special Teams (Simplified for Now)
             if (offPlay == PlayType.Punt)
             {
-                game.DecrementTime(10); // Punts take time
+                game.DecrementTime(10);
                 game.SwitchPossession();
-                return $"{offense.City} punts. {defense.City} takes over.";
+                //Get the Kicker if you have one, or just the QB punts (old school style)
+                return $"{qb.LastName} punts. {defense.City} takes over.";
             }
             if (offPlay == PlayType.FieldGoal)
             {
                 game.DecrementTime(5);
-                // Simple 80% success rate for now
+                Player kicker = offense.GetStarter(Position.K);
+
+                // Use Kicker's rating later? For now, standard RNG
                 if (_rand.Next(1, 101) > 20)
                 {
                     if (offense == game.HomeTeam) game.HomeScore += 3;
                     else game.AwayScore += 3;
-
-                    string result = $"{offense.City} KICKS THE FIELD GOAL! IT IS GOOD!";
-                    game.SwitchPossession(); // Kickoff (Simplified to touchback)
-                    return result;
+                    game.SwitchPossession();
+                    return $"{kicker.FirstName} {kicker.LastName} KICKS THE FIELD GOAL! IT IS GOOD!";
                 }
                 else
                 {
                     game.SwitchPossession();
-                    return $"{offense.City} missed the kick! Turnover.";
+                    return $"{kicker.LastName} missed the kick! Turnover.";
                 }
             }
 
-            // 3. Normal Play Logic (Run/Pass)
-            double offStrength = GetTeamAverage(offense);
-            double defStrength = GetTeamAverage(defense);
+            // 4. Resolve Normal Plays (Narrative Style)
+            int timeConsumed = 0;
+            int yardsGained = 0;
+            string narrative = "";
 
-            // Calculate Gain / Random Variance
-            int roll = _rand.Next(-5, 15);
-            int yardsGained = (int)(2 + roll); // simplified math for testing
-
-            // --- LOGIC: TIME CONSUMPTION ---
-            // Runs keep the clock moving (huddle). Passes stop clock if incomplete
             if (offPlay == PlayType.RunInside || offPlay == PlayType.RunOutside)
             {
-                timeConsumed = 35; // Run + Huddle
+                // RUN PLAY
+                timeConsumed = 35;
+
+                // Calculate gain based on RB rating vs Defense Average
+                // (We will make this more complex later)
+                int baseRoll = _rand.Next(-3, 8); // -3 to +7 base
+                int skillBonus = (rb.OverallRating - 70) / 5; //Bonus for good RBs
+                yardsGained = baseRoll + skillBonus;
+
+                //Narrative
+                if (yardsGained <0) narrative = $"{rb.LastName} is stuffed in the backfield for a loss of {-yardsGained}!";
+                else if (yardsGained == 0) narrative = $"{rb.LastName} is tackled at the line of scrimmage.";
+                else if (yardsGained > 10) narrative = $"{rb.LastName} BREAKS FREE! A huge run for {yardsGained} yards!";
+                else narrative = $"{rb.LastName} carries the ball for {yardsGained} yards.";
             }
-            else // pass
+            else
             {
-                //Simple logic: Negative yards on pass means a sack (clock runs)
-                // Positive yards usually means catch (clock runs)
-                // We need to simulate "Incomplete"
-                bool isIncomplete = _rand.Next(0, 10) > 6; // 30% chance incomplete
+                // PASS PLAY
+                bool isIncomplete = _rand.Next(0, 10) > 6; // 30% incompletion rate TODO: This shouldn't be hard coded should be based on the QB's skill vs Safeties/Cornerbacks
 
                 if (isIncomplete)
                 {
                     yardsGained = 0;
-                    timeConsumed = 6; // Clock stops
-                    return $"Incomplete Pass by {offense.City}. (Time: {game.GetClockDisplay()})";
+                    timeConsumed = 6;
+                    narrative = $"{qb.LastName} looks deep... Incomplete! Intended for {target.LastName}.";
                 }
                 else
                 {
-                    timeConsumed = 30; // Catch + huddle
+                    timeConsumed = 30;
+                    int baseRoll = _rand.Next(2, 15);
+                    int skillBonus = (qb.OverallRating - 70) / 5;
+                    yardsGained = baseRoll + skillBonus;
+
+                    if (yardsGained > 20) narrative = $"{qb.LastName} connects with {target.LastName} for a BIG GAIN of {yardsGained}!";
+                    else narrative = $"{qb.LastName} finds {target.LastName} for {yardsGained} yards.";
                 }
             }
-            // Apply the time
-            game.DecrementTime(timeConsumed);
 
-            // Update Game State
+            // 5. Apply Results
+            game.DecrementTime(timeConsumed);
             game.BallOn += yardsGained;
             game.YardsToGo -= yardsGained;
-            string playResult = $"{offPlay}: Gained {yardsGained} yards.";
 
-            // Check for First Down
+            // Append Situation info
+            string resultLog = $"[{offPlay}] {narrative}";
+
+            // Check Down/Score
             if (game.YardsToGo <= 0)
             {
                 game.Down = 1;
                 game.YardsToGo = 10;
-                playResult += " FIRST DOWN!";
+                resultLog += " FIRST DOWN!";
             }
             else
             {
                 game.Down++;
             }
 
-            // Check for Touchdown
             if (game.BallOn >= 100)
             {
-                playResult += $" TOUCHDOWN {offense.City}!";
-                if (offense == game.HomeTeam) game.HomeScore += 7; // Auto-extra point for now
+                resultLog += $" TOUCHDOWN {offense.City}!";
+                if (offense == game.HomeTeam) game.HomeScore += 7;
                 else game.AwayScore += 7;
                 game.SwitchPossession();
             }
-            // Check for Turnover on Downs (failed 4th down)
             else if (game.Down > 4)
             {
-                playResult += " Turnover on Downs!";
+                resultLog += " Turnover on Downs!";
                 game.SwitchPossession();
             }
 
-            return playResult;
+            return resultLog;
         }
 
 

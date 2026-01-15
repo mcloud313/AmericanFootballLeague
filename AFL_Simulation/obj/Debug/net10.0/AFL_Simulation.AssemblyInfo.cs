@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AFL_Simulation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+476dd89f8f520ed518267c06697426398dacb182")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4817a9931e8ce159862a3e48f388a1a8f06b0f0e")]
 [assembly: System.Reflection.AssemblyProductAttribute("AFL_Simulation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AFL_Simulation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

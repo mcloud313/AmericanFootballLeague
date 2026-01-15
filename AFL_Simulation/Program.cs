@@ -1,6 +1,7 @@
 ﻿using System;
 using AFL_Simulation.Models;
-using AFL_Simulation.Engine; 
+using AFL_Simulation.Engine;
+using AFL_simulation.Utils;
 
 namespace AFL_Simulation
 {
@@ -8,7 +9,7 @@ namespace AFL_Simulation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("--- AFL Game Day Simulator (v0.3) ---");
+            Console.WriteLine("--- AFL Game Day Simulator (v0.4) ---");
 
             // Setup
             Team kc = new Team("Kansas City", "Plainsmen", "Coach Marty");
@@ -19,7 +20,7 @@ namespace AFL_Simulation
             // Create the Game State
             Game currentGame = new Game(kc, ny);
 
-            Console.WriteLine("Kickoff! Kansas City starts at their own 20.");
+            Console.WriteLine($"KICKOFF: {kc.City} vs {ny.City}");
             Console.WriteLine("------------------------------------------------");
 
             // The GAME LOOP
@@ -29,14 +30,18 @@ namespace AFL_Simulation
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"\n[{currentGame.GetClockDisplay()}] SCORE: {kc.City} {currentGame.HomeScore} - {ny.City} {currentGame.AwayScore}");
                 Console.ResetColor();
+
+                // 2. Draw the Field
+                FieldPrinter.DrawField(currentGame);
+
+                // 3. Print Situation
                 Console.WriteLine($"Situation: {currentGame.GetSituation()}");
 
-                // 2. Simulate
+                // 4. Simulate Play
                 string result = PlayEngine.SimulatePlay(currentGame);
                 Console.WriteLine($">> {result}");
 
-                // 3. Speed Control (Make it watchable)
-                // If the quarter just changed, pause longer
+                // 5. Speed Control
                 if (currentGame.TimeRemaining == 900 && currentGame.CurrentQuarter > 1)
                 {
                     Console.WriteLine("\n*** END OF QUARTER ***\n");
@@ -44,7 +49,7 @@ namespace AFL_Simulation
                 }
                 else
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(1200); // Slightly slower to let you read the names
                 }
             }
 

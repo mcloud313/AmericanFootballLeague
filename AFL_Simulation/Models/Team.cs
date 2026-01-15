@@ -38,6 +38,46 @@ namespace AFL_Simulation.Models
             Roster.Add(Player.CreateRandomPlayer(Position.WR));
         }
 
+        public Player GetStarter(Position pos)
+        {
+            // LINQ would be shorter, but let's stick to simple loops for clarity
+            Player? best = null;
+
+            foreach (var p in Roster)
+            {
+                if (p.Position == pos)
+                {
+                    if (best == null || p.OverallRating > best.OverallRating)
+                    {
+                        best = p;
+                    }
+                }
+            }
+
+            // If we have no player at that position, return a generic "Scab" so the game doesn't crash
+            if (best == null) return new Player("Scab", "Player", pos, 50);
+
+            return best;
+        }
+
+        //Helper: get a random target for passing (WR, TE, RB)
+        public Player GetRandomReceiver()
+        {
+            var receivers = new List<Player>();
+            foreach(var p in Roster)
+            {
+                if (p.Position == Position.WR || p.Position == Position.RB)
+                {
+                    receivers.Add(p);
+                }
+            }
+
+            if (receivers.Count == 0) return new Player("Scab", "Receiver", Position.WR, 50);
+
+            var rand = new Random();
+            return receivers[rand.Next(receivers.Count)];
+        }
+
         public override string ToString()
         {
             return $"{City} {Name} (Coach: {Coach}) - Roster Size: {Roster.Count}";
