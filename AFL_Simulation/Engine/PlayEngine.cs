@@ -84,6 +84,12 @@ namespace AFL_Simulation.Engine
                 else if (yardsGained == 0) narrative = $"{rb.LastName} is tackled at the line of scrimmage.";
                 else if (yardsGained > 10) narrative = $"{rb.LastName} BREAKS FREE! A huge run for {yardsGained} yards!";
                 else narrative = $"{rb.LastName} carries the ball for {yardsGained} yards.";
+
+                //NEW: Record Stats
+                rb.GameStats.Carries++;
+                rb.GameStats.RushYards += yardsGained;
+                if (yardsGained > 0 && (game.BallOn + yardsGained >= 100))
+                    rb.GameStats.RushTDs++;
             }
             else
             {
@@ -105,7 +111,21 @@ namespace AFL_Simulation.Engine
 
                     if (yardsGained > 20) narrative = $"{qb.LastName} connects with {target.LastName} for a BIG GAIN of {yardsGained}!";
                     else narrative = $"{qb.LastName} finds {target.LastName} for {yardsGained} yards.";
+
+                    //NEW: Record Stats
+                    qb.GameStats.Completions++;
+                    qb.GameStats.PassYards += yardsGained;
+
+                    target.GameStats.Receptions++;
+                    target.GameStats.RecYards += yardsGained;
+
+                    if (yardsGained > 0 && (game.BallOn + yardsGained >= 100))
+                    {
+                        qb.GameStats.PassTDs++;
+                        target.GameStats.RecTDs++;
+                    }
                 }
+                
             }
 
             // 5. Apply Results

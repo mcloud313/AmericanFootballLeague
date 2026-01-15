@@ -59,6 +59,8 @@ namespace AFL_Simulation
             Console.WriteLine($"{kc.City}: {currentGame.HomeScore}");
             Console.WriteLine($"{ny.City}: {currentGame.AwayScore}");
             Console.WriteLine("=======================================");
+
+            AFL_Simulation.Utils.BoxScore.PrintBoxScore(kc, ny);
         }
 
         static int GetTeamOvr(Team t)

@@ -10,6 +10,7 @@ namespace AFL_Simulation.Models
         public string LastName {get; set;}
         public int Age {get; set;}
         public Position Position {get; set;}
+        public PlayerStats GameStats {get; set; } = new PlayerStats();
 
         // 2. Attributes (0-100 Scale)
         // We keep it simple for v0.1: One rating to rule them all.
@@ -65,5 +66,25 @@ namespace AFL_Simulation.Models
         {
             return $"{Position} {FirstName} {LastName} (OVR: {OverallRating})";
         }
+    }
+
+    public class PlayerStats
+    {
+        //Passing
+        public int PassAttempts {get; set; }
+        public int Completions {get; set; }
+        public int PassYards {get; set; }
+        public int PassTDs {get; set; }
+        public int Interceptions {get; set; }
+
+        //Rushing
+        public int Carries {get; set; }
+        public int RushYards {get; set; }
+        public int RushTDs {get; set; }
+
+        //Receiving
+        public int Receptions {get; set; }
+        public int RecYards {get; set; }
+        public int RecTDs {get; set; }
     }
 }
