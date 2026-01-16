@@ -76,15 +76,22 @@ namespace AFL_Simulation.Models
         public int PassYards {get; set; }
         public int PassTDs {get; set; }
         public int Interceptions {get; set; }
+        public int SacksTaken {get; set; }
 
         //Rushing
         public int Carries {get; set; }
         public int RushYards {get; set; }
         public int RushTDs {get; set; }
+        public int Fumbles {get; set; }
 
         //Receiving
         public int Receptions {get; set; }
         public int RecYards {get; set; }
         public int RecTDs {get; set; }
+
+        //Defense
+        public int Tackles {get; set; }
+        public int SacksRecorded {get; set; }
+        public int InterceptionsCaught {get; set; }
     }
 }

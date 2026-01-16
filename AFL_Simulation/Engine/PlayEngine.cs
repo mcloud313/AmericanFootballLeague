@@ -17,6 +17,9 @@ namespace AFL_Simulation.Engine
            Player rb = offense.GetStarter(Position.RB);
            Player target = offense.GetRandomReceiver();
 
+           //Random defender makes the play
+           Player defender = defense.GetStarter(Position.LB);
+
            //2. Play Selection
            PlayType offPlay;
            if (game.Down == 4)
@@ -35,7 +38,7 @@ namespace AFL_Simulation.Engine
                 }
             }
 
-            // 3. Handle Special Teams (Simplified for Now)
+            // 3. Special Teams
             if (offPlay == PlayType.Punt)
             {
                 game.DecrementTime(10);
@@ -63,40 +66,68 @@ namespace AFL_Simulation.Engine
                 }
             }
 
-            // 4. Resolve Normal Plays (Narrative Style)
+            // 4. Resolve Normal Plays
             int timeConsumed = 0;
             int yardsGained = 0;
             string narrative = "";
+            bool turnover = false;
 
             if (offPlay == PlayType.RunInside || offPlay == PlayType.RunOutside)
             {
                 // RUN PLAY
                 timeConsumed = 35;
 
-                // Calculate gain based on RB rating vs Defense Average
-                // (We will make this more complex later)
-                int baseRoll = _rand.Next(-3, 8); // -3 to +7 base
-                int skillBonus = (rb.OverallRating - 70) / 5; //Bonus for good RBs
-                yardsGained = baseRoll + skillBonus;
+                // FUMBLE CHECK (2% chance)
+                if (_rand.Next(1, 101) <= 2)
+                {
+                    turnover = true;
+                    rb.GameStats.Fumbles++;
+                    narrative = $"FUMBLE! {rb.LastName} loses the ball! {defense.City} recovers!";
+                }
+                else
+                {
+                    int baseRoll = _rand.Next(-3, 8);
+                    int skillBonus = (rb.OverallRating - 70) / 5;
+                    yardsGained = baseRoll + skillBonus;
 
-                //Narrative
-                if (yardsGained <0) narrative = $"{rb.LastName} is stuffed in the backfield for a loss of {-yardsGained}!";
-                else if (yardsGained == 0) narrative = $"{rb.LastName} is tackled at the line of scrimmage.";
-                else if (yardsGained > 10) narrative = $"{rb.LastName} BREAKS FREE! A huge run for {yardsGained} yards!";
-                else narrative = $"{rb.LastName} carries the ball for {yardsGained} yards.";
+                    rb.GameStats.Carries++;
+                    rb.GameStats.RushYards += yardsGained;
 
-                //NEW: Record Stats
-                rb.GameStats.Carries++;
-                rb.GameStats.RushYards += yardsGained;
-                if (yardsGained > 0 && (game.BallOn + yardsGained >= 100))
-                    rb.GameStats.RushTDs++;
+                    if (yardsGained > 0 && (game.BallOn + yardsGained >= 100)) 
+                        rb.GameStats.RushTDs++;
+                
+                    if (yardsGained < 0) narrative = $"{rb.LastName} stuffed by {defender.LastName} for a loss of {-yardsGained}!";
+                    else if (yardsGained > 10) narrative = $"{rb.LastName} BREAKS FREE! Run for {yardsGained} yards!";
+                    else narrative = $"{rb.LastName} runs for {yardsGained} yards.";
+                }
             }
             else
             {
-                // PASS PLAY
-                bool isIncomplete = _rand.Next(0, 10) > 6; // 30% incompletion rate TODO: This shouldn't be hard coded should be based on the QB's skill vs Safeties/Cornerbacks
+                qb.GameStats.PassAttempts++;
 
-                if (isIncomplete)
+                // SACK CHECK (5% chance)
+                if (_rand.Next(1, 101) <= 5)
+                {
+                    yardsGained = -(_rand.Next(5, 12));
+                    timeConsumed = 40; // Clock runs on a sack
+                    qb.GameStats.SacksTaken++;
+                    defender.GameStats.SacksRecorded++;
+                    narrative = $"SACK! {qb.LastName} is brought down by {defender.LastName} for a loss of {-yardsGained}!";
+                }
+                // INTERCEPTION CHECK (3% chance)
+                else if (_rand.Next(1, 101) <= 3)
+                {
+                    turnover = true;
+                    timeConsumed = 15;
+                    qb.GameStats.Interceptions++;
+                    defender.GameStats.InterceptionsCaught++;
+                    narrative = $"INTERCEPTION! {qb.LastName} is picked off by {defender.LastName}!";
+                }
+                else // Attempt a normal pass
+                {
+                   bool isIncomplete = _rand.Next(0, 10) > 6; // 30% incompletion rate TODO: This shouldn't be hard coded should be based on the QB's skill vs Safeties/Cornerbacks 
+
+                   if (isIncomplete)
                 {
                     yardsGained = 0;
                     timeConsumed = 6;
@@ -109,13 +140,8 @@ namespace AFL_Simulation.Engine
                     int skillBonus = (qb.OverallRating - 70) / 5;
                     yardsGained = baseRoll + skillBonus;
 
-                    if (yardsGained > 20) narrative = $"{qb.LastName} connects with {target.LastName} for a BIG GAIN of {yardsGained}!";
-                    else narrative = $"{qb.LastName} finds {target.LastName} for {yardsGained} yards.";
-
-                    //NEW: Record Stats
                     qb.GameStats.Completions++;
                     qb.GameStats.PassYards += yardsGained;
-
                     target.GameStats.Receptions++;
                     target.GameStats.RecYards += yardsGained;
 
@@ -124,12 +150,24 @@ namespace AFL_Simulation.Engine
                         qb.GameStats.PassTDs++;
                         target.GameStats.RecTDs++;
                     }
+                    
+
+                    if (yardsGained > 20) narrative = $"{qb.LastName} connects with {target.LastName} for a BIG GAIN of {yardsGained}!";
+                    else narrative = $"{qb.LastName} finds {target.LastName} for {yardsGained} yards.";
+                    
                 }
-                
             }
+        }
 
             // 5. Apply Results
             game.DecrementTime(timeConsumed);
+
+            if (turnover)
+            {
+                game.SwitchPossession();
+                return $"TURNOVER {narrative}";
+            }
+
             game.BallOn += yardsGained;
             game.YardsToGo -= yardsGained;
 

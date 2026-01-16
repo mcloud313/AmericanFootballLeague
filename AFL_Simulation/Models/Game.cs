@@ -64,17 +64,31 @@ namespace AFL_Simulation.Models
 
         private void EndQuarter()
         {
-            if (CurrentQuarter >= 4)
+            if (CurrentQuarter == 4)
             {
+                // check for tie
+                if (HomeScore == AwayScore)
+                {
+                    CurrentQuarter = 5; // Overtime
+                    TimeRemaining = 900; // 15 more minutes
+                    //In real life there is a coin toss, here we'll just keep playing
+                }
+                else
+                {
+                    TimeRemaining = 0;
+                    IsGameOver = true;
+                }
+            }
+            else if (CurrentQuarter >= 5)
+            {
+                // End of OT
                 TimeRemaining = 0;
                 IsGameOver = true;
             }
             else
             {
                 CurrentQuarter++;
-                TimeRemaining = 900; // Reset the clock to 15:00
-                // Note: In real football, possession logic at quarters is complex.
-                // For v0.3 we just keep posession as is.
+                TimeRemaining = 900; // reset to 15 minutes
             }
         }
 

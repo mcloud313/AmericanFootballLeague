@@ -22,7 +22,7 @@ namespace AFL_Simulation.Utils
 
             // Passing
             Player qb = t.GetStarter(Position.QB);
-            Console.WriteLine($"PASSING: {qb.FirstName} {qb.LastName}: {qb.GameStats.Completions}/{qb.GameStats.PassAttempts} for {qb.GameStats.PassYards} yds, {qb.GameStats.PassTDs} TD");
+            Console.WriteLine($"PASSING: {qb.FirstName} {qb.LastName}: {qb.GameStats.Completions}/{qb.GameStats.PassAttempts} for {qb.GameStats.PassYards} yds, {qb.GameStats.PassTDs} TD, {qb.GameStats.Interceptions} INT");
 
             // Rushing (Find players with carries)
             Console.WriteLine("RUSHING:");

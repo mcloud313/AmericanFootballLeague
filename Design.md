@@ -58,11 +58,6 @@ A text-based simulation management game starting in the year 1950. The user acts
 ## 5. Roadmap & Status
 
 ## Phase 2: The Simulation Core (Fidelity)
-* [ ] **v0.4:** **The Narrative Engine & Stats.**
-    * **Play-by-Play:** "Unitas passes to Berry for 12 yards" (requires Roster lookup).
-    * **Box Score:** Track individual Game Stats (Passing/Rushing/Receiving yards).
-    * **Turnovers:** Implement Interceptions, Fumbles, and Sacks.
-    * **Overtime:** Logic for 5th Quarter if tied.
 * [ ] **v0.5:** **The Depth Chart.**
     * **Substitution Logic:** Starters play most snaps; backups come in for blowouts or injuries.
     * **Specialists:** Designate specific KR/PR (Kick/Punt Returners) and K/P.
