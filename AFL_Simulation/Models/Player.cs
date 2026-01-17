@@ -9,6 +9,7 @@ namespace AFL_Simulation.Models
         public string FirstName {get; set;}
         public string LastName {get; set;}
         public int Age {get; set;}
+        public int Energy {get; set; } = 100;
         public Position Position {get; set;}
         public PlayerStats GameStats {get; set; } = new PlayerStats();
 
