@@ -49,7 +49,7 @@ namespace AFL_Simulation.Engine
             if (offPlay == PlayType.FieldGoal)
             {
                 game.DecrementTime(5);
-                Player kicker = offense.GetStarter(Position.K);
+                Player kicker = offense.GetKicker();
 
                 // Use Kicker's rating later? For now, standard RNG
                 if (_rand.Next(1, 101) > 20)
@@ -198,6 +198,17 @@ namespace AFL_Simulation.Engine
                 resultLog += " Turnover on Downs!";
                 game.SwitchPossession();
             }
+
+            // Drain Active Players
+            qb.Energy -= 2; //QBs don't use a lot of energy
+            if (offPlay == PlayType.RunInside || offPlay == PlayType.RunOutside) rb.Energy -= 5;
+            if (offPlay == PlayType.ShortPass || offPlay == PlayType.LongPass) target.Energy -= 4;
+            defender.Energy -= 4;
+
+            //Recover bench players
+            //Loop through roster and give +2 energy to anyone not in this play
+            //For v0.5 we'll skip this to keep performance high.
+            // but just know that substitution logic relies on them recovering.
 
             return resultLog;
         }

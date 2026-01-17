@@ -9,6 +9,7 @@ namespace AFL_Simulation.Models
         public string City {get; set; }
         public string Coach {get; set; }
         public List<Player> Roster {get; set; } = new List<Player>();
+        public DepthChart DepthChart {get; set; } = new DepthChart();
         public Team(string city, string name, string coach)
         {
             City = city;
@@ -20,6 +21,7 @@ namespace AFL_Simulation.Models
         public void SignPlayer(Player p)
         {
             Roster.Add(p);
+            DepthChart.AutoReorder(Roster);
         }
 
         //Helper: Generate a full roster of random players (for testing)
@@ -36,28 +38,29 @@ namespace AFL_Simulation.Models
             Roster.Add(Player.CreateRandomPlayer(Position.WR));
             Roster.Add(Player.CreateRandomPlayer(Position.WR));
             Roster.Add(Player.CreateRandomPlayer(Position.WR));
+
+            DepthChart.AutoReorder(Roster);
         }
 
         public Player GetStarter(Position pos)
         {
-            // LINQ would be shorter, but let's stick to simple loops for clarity
-            Player? best = null;
+            Player p = DepthChart.GetPlayerForSnap(pos);
 
-            foreach (var p in Roster)
-            {
-                if (p.Position == pos)
-                {
-                    if (best == null || p.OverallRating > best.OverallRating)
-                    {
-                        best = p;
-                    }
-                }
-            }
+            //Safety check: if chart is empty return a temp scab
+            if (p == null) return new Player("Scab", "Player", pos, 50);
+            return p;
+        }
 
-            // If we have no player at that position, return a generic "Scab" so the game doesn't crash
-            if (best == null) return new Player("Scab", "Player", pos, 50);
+        public Player GetKicker()
+        {
+            if (DepthChart.Kicker != null) return DepthChart.Kicker;
+            return new Player("Scab", "Kicker", Position.K, 50);
+        }
 
-            return best;
+        public Player GetPunter()
+        {
+            if (DepthChart.Punter != null) return DepthChart.Punter;
+            return new Player("Scab", "Punter", Position.K, 50);
         }
 
         //Helper: get a random target for passing (WR, TE, RB)

@@ -58,9 +58,6 @@ A text-based simulation management game starting in the year 1950. The user acts
 ## 5. Roadmap & Status
 
 ## Phase 2: The Simulation Core (Fidelity)
-* [ ] **v0.5:** **The Depth Chart.**
-    * **Substitution Logic:** Starters play most snaps; backups come in for blowouts or injuries.
-    * **Specialists:** Designate specific KR/PR (Kick/Punt Returners) and K/P.
 * [ ] **v0.6:** **Advanced Game Logic.**
     * **Penalties:** False starts, holding (kills drives), pass interference (extends drives).
     * **Fatigue:** Players perform worse if they play 10 snaps in a row without a break.
@@ -74,6 +71,7 @@ A text-based simulation management game starting in the year 1950. The user acts
     * Simulating other games in the background.
     * **News Ticker:** "Breaking News: NY's Star QB out for season!"
     * **Injury System:** "Probable," "Questionable," "Doubtful," "IR."
+    * **Injury Depth:** Injuries aren't just "Out for 2 weeks." They can be "Career Ending" or "Chronic" (lowers Durability permanently).
 * [ ] **v0.9:** **Standings & Playoffs.**
     * Track W-L-T records.
     * Tie-breaker logic for playoff seeding.
@@ -88,6 +86,8 @@ A text-based simulation management game starting in the year 1950. The user acts
     * **Financials:** Ticket prices, stadium maintenance, player contracts/salaries.
     * **The Draft:** 12 Rounds of rookies. Logic for AI teams to draft based on "Best Player Available" vs "Team Need."
     * **Trades:** AI logic to offer/accept trades based on player value.
+    * **Aging Curve:** Players peak at 26-28. 35+ see sharp physical declines.
+    * **Wear & Tear:** RBs with high carry counts age faster.
 
 ## Phase 5: Historical & Immersion (The "Flavor")
 * [ ] **v1.2:** **Historical Database.**

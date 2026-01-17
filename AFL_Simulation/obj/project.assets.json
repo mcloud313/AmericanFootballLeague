@@ -8,24 +8,25 @@
     "net10.0": []
   },
   "packageFolders": {
-    "/home/codespace/.nuget/packages/": {}
+    "/home/andrewcardin/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/workspaces/AmericanFootballLeague/AFL_Simulation/AFL_Simulation.csproj",
+      "projectUniqueName": "/home/andrewcardin/Documents/Projects/AmericanFootballLeague/AFL_Simulation/AFL_Simulation.csproj",
       "projectName": "AFL_Simulation",
-      "projectPath": "/workspaces/AmericanFootballLeague/AFL_Simulation/AFL_Simulation.csproj",
-      "packagesPath": "/home/codespace/.nuget/packages/",
-      "outputPath": "/workspaces/AmericanFootballLeague/AFL_Simulation/obj/",
+      "projectPath": "/home/andrewcardin/Documents/Projects/AmericanFootballLeague/AFL_Simulation/AFL_Simulation.csproj",
+      "packagesPath": "/home/andrewcardin/.nuget/packages/",
+      "outputPath": "/home/andrewcardin/Documents/Projects/AmericanFootballLeague/AFL_Simulation/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/codespace/.nuget/NuGet/NuGet.Config"
+        "/home/andrewcardin/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -65,7 +66,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
